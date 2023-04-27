@@ -8,7 +8,7 @@ Self-graded Assignment 1 Checklist
 []  The signout buttons end the session.
 []  All secrets, encryption keys, database passwords are stored in a .env file.
 
-[]  The .env file is NOT in your git repo.
+[x]  The .env file is NOT in your git repo.
 []  Password is BCrypted in the MongoDB database.
 []  Your site is hosted in a hosting service like Qoddi.
 []  A 404 page that "catches" all invalid page hits and that sets the status code to 404.
