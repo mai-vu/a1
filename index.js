@@ -193,12 +193,15 @@ app.get('/members', (req, res) => {
     var rand = Math.floor(Math.random() * 3) + 1;
 
     if (rand == 1) {
-        res.send(`Hello, ${req.session.name}!<br>Fluffy: <img src='/fluffy.gif' style='width:250px;'>`);
+        res.send(`Hello, ${req.session.name}!<br><img src='/fluffy.gif' style='width:250px;'><br>
+        <div><a href="/logout">log out</a></div>`);
     }
     else if (rand == 2) {
-        res.send(`Hello, ${req.session.name}!<br>Socks: <img src='/socks.gif' style='width:250px;'>`);
+        res.send(`Hello, ${req.session.name}!<br><img src='/socks.gif' style='width:250px;'><br>
+        <div><a href="/logout">log out</a></div>`);
     } else if (rand == 3) {
-        res.send(`Hello, ${req.session.name}!<br>Spot: <img src='/cat.gif' style='width:250px;'>`);
+        res.send(`Hello, ${req.session.name}!<br><img src='/cat.gif' style='width:250px;'><br>
+        <div><a href="/logout">log out</a></div>`);
     } else {
         res.send("Invalid request: "+ rand);
     }
