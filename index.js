@@ -51,16 +51,16 @@ app.use(session({
 app.get('/', (req,res) => {
     if (!req.session.authenticated) {
         var html = `
-            <div><a href="/signup">sign up</a></div>
-            <div><a href="/login">log in</a></div>
+        <div><button onclick="location.href='/signup';">Sign Up</button></div>
+        <div><button onclick="location.href='/login';">Log In</button></div>
         `;
         res.send(html);
         return;
     } else {
         var html = `
             Hello, ${req.session.name}!
-            <div><a href="/members">Member's area</a></div>
-            <div><a href="/logout">log out</a></div>
+            <div><button onclick="location.href='/members';">Go to member's area</button></div>
+            <div><button onclick="location.href='/logout';">Logout</button></div>
         `;
         res.send(html);
         return;
@@ -178,8 +178,8 @@ app.get('/loggedin', (req,res) => {
     }
     var html = `
         Hello, ${req.session.name}!
-        <div><a href="/members">Go to Member's area</a></div>
-        <div><a href="/logout">log out</a></div>
+        <div><button onclick="location.href='/members';">Go to member's area</button></div>
+        <div><button onclick="location.href='/logout';">Logout</button></div>
     `;
     res.send(html);
 });
@@ -194,14 +194,14 @@ app.get('/members', (req, res) => {
 
     if (rand == 1) {
         res.send(`Hello, ${req.session.name}!<br><img src='/fluffy.gif' style='width:250px;'><br>
-        <div><a href="/logout">log out</a></div>`);
+        <div><button onclick="location.href='/logout';">Sign out</button></div>`);
     }
     else if (rand == 2) {
         res.send(`Hello, ${req.session.name}!<br><img src='/socks.gif' style='width:250px;'><br>
-        <div><a href="/logout">log out</a></div>`);
+        <div><button onclick="location.href='/logout';">Sign out</button></div>`);
     } else if (rand == 3) {
         res.send(`Hello, ${req.session.name}!<br><img src='/cat.gif' style='width:250px;'><br>
-        <div><a href="/logout">log out</a></div>`);
+        <div><button onclick="location.href='/logout';">Sign out</button></div>`);
     } else {
         res.send("Invalid request: "+ rand);
     }
@@ -209,7 +209,7 @@ app.get('/members', (req, res) => {
   
 app.get('/logout', (req,res) => {
 	req.session.destroy();
-    res.redirect('/login');
+    res.redirect('/');
 });
 
 app.use(express.static(__dirname + "/public"));
