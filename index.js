@@ -15,7 +15,7 @@ const app = express();
 const Joi = require("joi");
 
 
-const expireTime = 1 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes * seconds * millis)
+const expireTime = 60 * 60 * 1000; //expires after 1 hour
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -78,18 +78,6 @@ app.get('/signup', (req, res) => {
       </form>
     `);
 });
-  
-app.get('/login', (req,res) => {
-    var html = `
-    log in
-    <form action='/loggingin' method='post'>
-    <input name='email' type='email' placeholder='email'><br>
-    <input name='password' type='password' placeholder='password'><br>
-    <button>Submit</button>
-    </form>
-    `;
-    res.send(html);
-});
 
 app.post('/submit', async (req,res) => {
     try {
@@ -109,31 +97,45 @@ app.post('/submit', async (req,res) => {
         if (validationResult.error) {
             const { context: { key } } = validationResult.error.details[0];
             const errorMessage = `Please provide a ${key}.<br> <a href="/signup">Try again</a>`;
-            return res.send(errorMessage);
+            res.send(errorMessage);
         }
     
         // Check if the email is already in use
-        const user = await userCollection.findOne({ email: req.body.email });
+        const user = await userCollection.findOne({ email: email });
         if (user) {
-          return res.send(`The email address is already in use. <a href="/signup">Try again</a>`);
+            res.send(`The email address is already in use. <a href="/signup">Try again</a>`);
         }
     
         // Hash the password using bcrypt
         const hashedPassword = await bcrypt.hash(password, saltRounds);
     
-         // Add the user to the MongoDB database
-        await userCollection.insertOne({ name, email, password: hashedPassword });
-        console.log("Inserted user");
+        // Add the user to the MongoDB database
+        const newUser = { name, email, password: hashedPassword };
+        const result = await userCollection.insertOne(newUser);
     
-        // // Set up a session for the new user
-        // req.session.userId = newUser._id;
+        // Set up a session for the new user
+        req.session.authenticated = true;
+        req.session.userId = result.insertedId;
+        req.session.name = name;
     
         // Redirect the user to the members page
         res.redirect('/members');
-      } catch (err) {
+    } catch (err) {
         console.error(err);
         res.send('An error occurred. Please try again later.');
     }
+});
+
+app.get('/login', (req,res) => {
+    var html = `
+    log in
+    <form action='/loggingin' method='post'>
+    <input name='email' type='email' placeholder='email'><br>
+    <input name='password' type='password' placeholder='password'><br>
+    <button>Submit</button>
+    </form>
+    `;
+    res.send(html);
 });
   
 app.post('/loggingin', async (req,res) => {
@@ -162,7 +164,7 @@ app.post('/loggingin', async (req,res) => {
 		req.session.name = result[0].name;
 		req.session.cookie.maxAge = expireTime;
 
-		res.redirect('/loggedIn');
+		res.redirect('/members');
 		return;
 	}
 	else {
@@ -172,21 +174,9 @@ app.post('/loggingin', async (req,res) => {
 	}
 });
 
-app.get('/loggedin', (req,res) => {
-    if (!req.session.authenticated) {
-        res.redirect('/login');
-    }
-    var html = `
-        Hello, ${req.session.name}!
-        <div><button onclick="location.href='/members';">Go to member's area</button></div>
-        <div><button onclick="location.href='/logout';">Logout</button></div>
-    `;
-    res.send(html);
-});
-
 app.get('/members', (req, res) => {
     if (!req.session.authenticated) {
-        res.redirect('/login');
+        res.redirect('/');
     }
 
     //generate random 1 to 3 to rand variable
