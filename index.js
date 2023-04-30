@@ -98,6 +98,7 @@ app.post('/submit', async (req,res) => {
             const { context: { key } } = validationResult.error.details[0];
             const errorMessage = `Please provide a ${key}.<br> <a href="/signup">Try again</a>`;
             res.send(errorMessage);
+            return;
         }
     
         // Check if the email is already in use
@@ -146,8 +147,8 @@ app.post('/loggingin', async (req,res) => {
 	const validationResult = schema.validate(email);
 	if (validationResult.error != null) {
 	   console.log(validationResult.error);
-	   res.redirect("/login");
-	   return;
+	   const errorMessage = `Please provide a ${key}.<br> <a href="/login">Try again</a>`;
+        return res.send(errorMessage);
 	}
 
 	const result = await userCollection.find({email: email}).project({email: 1, name: 1, password: 1, _id: 1}).toArray();
@@ -168,10 +169,11 @@ app.post('/loggingin', async (req,res) => {
 		return;
 	}
 	else {
-		console.log("incorrect password");
-		res.redirect("/login");
-		return;
-	}
+        console.log("incorrect password");
+        const errorMessage = `Invalid email/password combination.<br><a href="/login">Try again</a>`;
+        res.send(errorMessage);
+        return;
+    }    
 });
 
 app.get('/members', (req, res) => {
