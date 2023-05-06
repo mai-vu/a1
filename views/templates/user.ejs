@@ -1,0 +1,9 @@
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title"><%= user.name %> (<%= user.user_type %>)</h5>
+        <button class="btn btn-success rounded-pill px-3" type="button"
+            onclick="updateUserType('<%= user.email %>', 'admin')">Promote to Admin</button>
+        <button class="btn btn-warning rounded-pill px-3" type="button"
+            onclick="updateUserType('<%= user.email %>', 'user')">Demote to User</button>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<%- include("templates/header") %>
+
+<div class="container mt-4">
+  <% for(let i = 0; i < users.length; i++) { %>
+  <%- include('templates/user', {user: users[i]})  %>
+  <% } %>
+</div>
+
+<script>
+  async function updateUserType(email, userType) {
+    try {
+      const response = await fetch(`/users/${email}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_type: userType
+        })
+      });
+      const result = await response.text();
+      console.log(result);
+      location.reload(); // refresh the page to see the updated user type
+    } catch (err) {
+      console.error(`Failed to update user type for ${email}: ${err}`);
+    }
+  }
+</script>
+<%- include("templates/footer") %>
